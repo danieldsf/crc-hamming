@@ -7,6 +7,8 @@ app.controller('crcController', ['$scope', function ($scope) {
     $scope.sentNumber = "";
     $scope.code = "111100101";
     $scope.valid = "";
+    $scope.sentList = [];
+    $scope.sentRange = [];
 
     $scope.createCRC = function(){
       var currentNumber = $scope.crc.code.$viewValue.toString();
@@ -19,6 +21,25 @@ app.controller('crcController', ['$scope', function ($scope) {
       sentNumber = sentNumber.toString();
       //console.log(sentNumber);
       $scope.sentNumber = sentNumber;
+      $scope.sentList =  getListByNumber(sentNumber);
+      $scope.sentRange = getListByRange(sentNumber);
+    }
+
+    function getListByNumber(number){
+      var output = [], sNumber = number.toString();
+      for (var i = 0, len = sNumber.length; i < len; i += 1) {
+        output.push(sNumber.charAt(i));
+      }
+      console.log(output);
+      return output;  
+    }
+
+    function getListByRange(lista){
+      var container = [];
+      for (var i = 0; i < lista.length; i++) {
+        container.push(i+1);
+      }
+      return container;
     }
 
     function loopXOR(dividend, divisor){
@@ -53,6 +74,8 @@ app.controller('crcController', ['$scope', function ($scope) {
 function divideXOR(a, b){
   return (a == b) ? "0" : "1";
 }
+
+
 
 app.controller('hammingController', ['$scope', function ($scope) {
     $scope.regex = /^[01]*$/;
