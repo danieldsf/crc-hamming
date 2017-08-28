@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>CRC - Hamming Verification</title>
+
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootswatch/3.3.7/flatly/bootstrap.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.6.5/angular.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.6.5/angular-route.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.0.0/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+
+  </head>
+  <body ng-app="app">
+    <h2 class="text-center">CRC / Hamming Algorithms App</h2>
+
+    <div ng-controller="crcController">
+      <h3>CRC Verification</h3>
+      <ng-form name="crc">
+        <label for="code">Codigo&nbsp;&nbsp;&nbsp;</label>
+        <input type="text" ng-model="code" name="code" ng-pattern="regex" required>
+        <br>
+        <label for="generator">Gerador</label>
+        <input type="text" ng-model="generator" name="generator" ng-pattern="regex" required>
+      </ng-form>
+
+      <div class="aftermath">GERADOR: {{ crc.generator.$viewValue }}</div>
+
+      <div ng-show="crc.code.$error.pattern"  style="color:red">Numero principal deve ser um binario valido</div>
+      <div ng-show="crc.generator.$error.pattern"  style="color:red">Numero gerador deve ser um binario valido</div>
+
+      <div class="">
+        <button type="button" name="button" ng-disabled="crc.code.$invalid" ng-click="createCRC()">Calcular CRC</button>
+        <button type="button" name="button" ng-disabled="crc.code.$invalid" ng-click="checkCRC()">Checkar CRC</button>
+      </div>
+
+      <div class="" ng-show="sentNumber">
+          Valor a ser enviado: {{ sentNumber }}
+      </div>
+      <div class="" ng-show="valid">
+          Resultado da verificacao: {{ valid }}
+      </div>
+    </div>
+
+    <hr/>
+
+    <div ng-controller="hammingController">
+      <h3>Hamming Verification</h3>
+      <ng-form name="ham">
+        <label for="code">Codigo</label>
+        &nbsp;&nbsp;&nbsp;&nbsp;<input type="text" ng-model="code" name="code" value="0" ng-pattern="regex" required>
+        <br>
+        <label for="parity">Paridade</label>
+        <select class="" name="parity" ng-model="parity" value="p" required>
+            <option value="p">par</option>
+            <option value="i">impar</option>
+        </select>
+      </ng-form>
+
+      <span ng-show="ham.code.$error.pattern"  style="color:red"><br/>Binnary number should be in valid formate.<br/></span>
+
+      <div class="">
+        <button type="button" name="button" ng-disabled="ham.code.$invalid && ham.parity.$invalid" ng-click="createHamming()">Calcular Hamming</button>
+        <button type="button" name="button" ng-disabled="true" ng-click="checkHamming()">Checkar Hamming</button>
+      </div>
+
+      <div class="" ng-show="sentNumber">
+          Valor a ser enviado: {{ sentNumber }}
+      </div>
+      <div class="" ng-show="valid">
+          Resultado da verificacao: {{ valid }}
+      </div>
+    </div>
+
+    <!--SCRIPTS-->
+    <script type="text/javascript" src="custom.js"></script>
+  </body>
+</html>
