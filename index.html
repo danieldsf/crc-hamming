@@ -54,14 +54,14 @@
 									<input type="text" name="code" id="code" ng-model="code" ng-pattern="regex"/>
 								</div>
 
-								<!--<div class="field">
+								<div class="field">
 									<label for="parity">Paridade</label>
 									<select class="" name="parity" ng-model="parity">
 											<option value="s">Sem paridade</option>
 											<option value="p">Paridade par</option>
 											<option value="i">Paridade impar</option>
 									</select>
-								</div>-->
+								</div>
 
 								<ul class="actions">
 									<li><input type="button" ng-disabled="ham.code.$invalid" ng-click="createHamming()" value="Calcular Hamming" class="special" /></li>
@@ -69,11 +69,18 @@
 								</ul>
 
 								<div class="field" style="margin-top: 20px;">
-									<label for="code_checked">Codigo a ser checado</label>
+									<label for="code_checked">Codigo gerado com paridade</label>
 									<input type="text" name="code_checked" id="code_checked" ng-model="code_checked" ng-pattern="regex"/>
 								</div>
-								<h2>Codigo base: {{ sentNumber }}</h2>
-								<!--<h2>Paridade: {{ parityLabel }}</h2>-->
+
+								<div class="field" style="margin-top: 20px;">
+									<label for="code_checked">Codigo a ser verificado</label>
+									<input type="text" name="code_error" id="code_erro" ng-model="code_error" ng-pattern="regex"/>
+								</div>
+
+								<h2 ng-show="pressed">Codigo base: {{ sentNumber }}</h2>
+								<h2>Paridade: {{ parityLabel }}</h2>
+								<h2 ng-show="position">Posicao de erro: {{ position }}</h2>
 							</form>
 							<div style="width: 800px;">
 							<table ng-repeat="x in verificators" style="width: 750px; margin: 0 auto; margin-top: 30px; margin-bottom: 30px;">
