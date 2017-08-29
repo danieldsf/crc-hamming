@@ -23,7 +23,7 @@
 			$header = $('#header'),
 			$footer = $('#footer'),
 			$main = $('#main'),
-			$main_articles = $main.children('article');
+			$main_divs = $main.children('div');
 
 		// Disable animations/transitions until the page has loaded.
 			$body.addClass('is-loading');
@@ -78,10 +78,10 @@
 			// Methods.
 				$main._show = function(id, initial) {
 
-					var $article = $main_articles.filter('#' + id);
+					var $div = $main_divs.filter('#' + id);
 
-					// No such article? Bail.
-						if ($article.length == 0)
+					// No such div? Bail.
+						if ($div.length == 0)
 							return;
 
 					// Handle lock.
@@ -93,21 +93,21 @@
 									$body.addClass('is-switching');
 
 								// Mark as visible.
-									$body.addClass('is-article-visible');
+									$body.addClass('is-div-visible');
 
-								// Deactivate all articles (just in case one's already active).
-									$main_articles.removeClass('active');
+								// Deactivate all divs (just in case one's already active).
+									$main_divs.removeClass('active');
 
 								// Hide header, footer.
 									$header.hide();
 									$footer.hide();
 
-								// Show main, article.
+								// Show main, div.
 									$main.show();
-									$article.show();
+									$div.show();
 
-								// Activate article.
-									$article.addClass('active');
+								// Activate div.
+									$div.addClass('active');
 
 								// Unlock.
 									locked = false;
@@ -124,27 +124,27 @@
 						// Lock.
 							locked = true;
 
-					// Article already visible? Just swap articles.
-						if ($body.hasClass('is-article-visible')) {
+					// div already visible? Just swap divs.
+						if ($body.hasClass('is-div-visible')) {
 
-							// Deactivate current article.
-								var $currentArticle = $main_articles.filter('.active');
+							// Deactivate current div.
+								var $currentdiv = $main_divs.filter('.active');
 
-								$currentArticle.removeClass('active');
+								$currentdiv.removeClass('active');
 
-							// Show article.
+							// Show div.
 								setTimeout(function() {
 
-									// Hide current article.
-										$currentArticle.hide();
+									// Hide current div.
+										$currentdiv.hide();
 
-									// Show article.
-										$article.show();
+									// Show div.
+										$div.show();
 
-									// Activate article.
+									// Activate div.
 										setTimeout(function() {
 
-											$article.addClass('active');
+											$div.addClass('active');
 
 											// Window stuff.
 												$window
@@ -167,23 +167,23 @@
 
 							// Mark as visible.
 								$body
-									.addClass('is-article-visible');
+									.addClass('is-div-visible');
 
-							// Show article.
+							// Show div.
 								setTimeout(function() {
 
 									// Hide header, footer.
 										$header.hide();
 										$footer.hide();
 
-									// Show main, article.
+									// Show main, div.
 										$main.show();
-										$article.show();
+										$div.show();
 
-									// Activate article.
+									// Activate div.
 										setTimeout(function() {
 
-											$article.addClass('active');
+											$div.addClass('active');
 
 											// Window stuff.
 												$window
@@ -205,10 +205,10 @@
 
 				$main._hide = function(addState) {
 
-					var $article = $main_articles.filter('.active');
+					var $div = $main_divs.filter('.active');
 
-					// Article not visible? Bail.
-						if (!$body.hasClass('is-article-visible'))
+					// div not visible? Bail.
+						if (!$body.hasClass('is-div-visible'))
 							return;
 
 					// Add state?
@@ -224,11 +224,11 @@
 								// Mark as switching.
 									$body.addClass('is-switching');
 
-								// Deactivate article.
-									$article.removeClass('active');
+								// Deactivate div.
+									$div.removeClass('active');
 
-								// Hide article, main.
-									$article.hide();
+								// Hide div, main.
+									$div.hide();
 									$main.hide();
 
 								// Show footer, header.
@@ -236,7 +236,7 @@
 									$header.show();
 
 								// Unmark as visible.
-									$body.removeClass('is-article-visible');
+									$body.removeClass('is-div-visible');
 
 								// Unlock.
 									locked = false;
@@ -256,14 +256,14 @@
 						// Lock.
 							locked = true;
 
-					// Deactivate article.
-						$article.removeClass('active');
+					// Deactivate div.
+						$div.removeClass('active');
 
-					// Hide article.
+					// Hide div.
 						setTimeout(function() {
 
-							// Hide article, main.
-								$article.hide();
+							// Hide div, main.
+								$div.hide();
 								$main.hide();
 
 							// Show footer, header.
@@ -273,7 +273,7 @@
 							// Unmark as visible.
 								setTimeout(function() {
 
-									$body.removeClass('is-article-visible');
+									$body.removeClass('is-div-visible');
 
 									// Window stuff.
 										$window
@@ -292,8 +292,8 @@
 
 				};
 
-			// Articles.
-				$main_articles.each(function() {
+			// divs.
+				$main_divs.each(function() {
 
 					var $this = $(this);
 
@@ -304,7 +304,7 @@
 								location.hash = '';
 							});
 
-					// Prevent clicks from inside article from bubbling.
+					// Prevent clicks from inside div from bubbling.
 						$this.on('click', function(event) {
 							event.stopPropagation();
 						});
@@ -314,8 +314,8 @@
 			// Events.
 				$body.on('click', function(event) {
 
-					// Article visible? Hide.
-						if ($body.hasClass('is-article-visible'))
+					// div visible? Hide.
+						if ($body.hasClass('is-div-visible'))
 							$main._hide(true);
 
 				});
@@ -326,8 +326,8 @@
 
 						case 27:
 
-							// Article visible? Hide.
-								if ($body.hasClass('is-article-visible'))
+							// div visible? Hide.
+								if ($body.hasClass('is-div-visible'))
 									$main._hide(true);
 
 							break;
@@ -354,14 +354,14 @@
 
 						}
 
-					// Otherwise, check for a matching article.
-						else if ($main_articles.filter(location.hash).length > 0) {
+					// Otherwise, check for a matching div.
+						else if ($main_divs.filter(location.hash).length > 0) {
 
 							// Prevent default.
 								event.preventDefault();
 								event.stopPropagation();
 
-							// Show article.
+							// Show div.
 								$main._show(location.hash.substr(1));
 
 						}
@@ -393,11 +393,11 @@
 
 			// Initialize.
 
-				// Hide main, articles.
+				// Hide main, divs.
 					$main.hide();
-					$main_articles.hide();
+					$main_divs.hide();
 
-				// Initial article.
+				// Initial div.
 					if (location.hash != ''
 					&&	location.hash != '#')
 						$window.on('load', function() {
