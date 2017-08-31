@@ -2,7 +2,6 @@ const app = angular.module("app", []);
 const regex_binnary = /^[01]*$/;
 
 $(document).ready(function(){
-    //alert(2);
     $("#aCRC").click(function(e){
       $("#crc").show();
       $("#ham").hide();
@@ -17,7 +16,6 @@ $(document).ready(function(){
     $("#ham").toggle();
 });
 
-//
 app.controller('crcController', ['$scope', function ($scope) {
     $scope.regex = /^[01]*$/;
     $scope.generator = "101101";
@@ -107,45 +105,80 @@ app.controller('hammingController', ['$scope', function ($scope) {
     $scope.pressed = false;
     $scope.parityLabel = "Par";
     $scope.position = false;
+    $scope.valid = false;
+    $scope.notice = false;
 
-
+    $scope.updateParity = function(){
+      var parity = $scope.ham.parity.$viewValue;
+      $scope.parity = parity;
+      if(parity == 'p'){
+        $scope.parityLabel = "PAR";
+      }else if(parity == 'i'){
+        $scope.parityLabel = "IMPAR";
+      }
+    }
 
     $scope.checkCRC = function(){
-    	  /*
-        var ok = $scope.ham.code_checked.$viewValue;
-      	var toCheck = $scope.ham.code_error.$viewValue;
-      	var cont = 0;
-      	var index = 0;
-      	for (var i = 0; i < ok.toString().length; i++) {
-      		if(ok[i] != toCheck[i]){
-      			cont++;
-      			index = i;
-      		}
-      	}
+        var toCheck = $scope.ham.code_error.$viewValue;
 
-      	if(cont == 1){
-      		$scope.position = index+1;
-      	}else{
-      		$scope.position = "Multiplos erros";
-      	}
-      	//var verificadores = $scope.finalVerificators;
-      	//checkCode(toCheck, verificadores);
-        */
+        $scope.sentNumber = toCheck;
+
+        var verificators = checkVerifiers(toCheck);
+        var cont = 0;
+        var indexes = [];
+        var soma = 0;
+        console.log(verificators);
+
+        var masterVer = [];
+        for (var i = 0; i < verificators.length; i++) {
+          masterVer.push(verificators[i][0]);
+        }
+
+        $scope.finalVerificators = verificators;
+        $scope.verificators = masterVer;
+
+        for (var i = 0; i < verificators.length; i++) {
+          var master = verificators[i][0];
+          var temp = "0";
+
+          for (var j = 1; j < verificators[i].length; j++) {
+              temp = divideXOR(temp, toCheck[verificators[i][j]-1]);
+          }
+          //
+          var value = checkParityBit(divideXOR(temp, "0"), $scope.parity);
+
+          console.log("MASTER = " + toCheck[master-1]);
+          console.log("PARITY = " + value);
+          console.log("TEMP = "   + temp);
+
+          if(divideXOR(toCheck[master - 1], value) == "1"){
+              soma = soma + i + 1;
+              indexes.push(i + 1)
+          }
+          //
+          if(soma == 0){
+            $scope.valid = "VALIDO";
+            $scope.notice = false;
+          }else {
+            $scope.valid = "INVALIDO"
+            $scope.notice = "INDICE INVERTIDO: " + soma + " / ERROS EM: " + indexes;
+          }
+        }
+        //
+        console.log("INDICE DE ERRO: " + indexes);
+        console.log("QUANTIDADE DE ERROS: " + cont);
+        //
     }
 
     $scope.createHamming = function(){
-      if($scope.parity.$viewValue == 'p'){
-        $scope.parityLabel = "PAR";
-      }else if($scope.parity.$viewValue == 'i'){
-        $scope.parityLabel = "IMPAR";
-      }
-      //
+      $scope.valid = false;
       $scope.pressed = true;
       var currentNumber = $scope.ham.code.$viewValue;
       var nextNumber = generateBaseSequence(currentNumber);
       var verificators = nextNumber.verificators;
       nextNumber = nextNumber.lista;
       var parity = $scope.ham.parity.$viewValue;
+
       var finalVerificators = getFinalNumber(nextNumber, verificators, parity).lista;
       //var parityBit = checkParityBit(nextNumber, parity);
       var finalNumber = nextNumber.toString();
@@ -156,18 +189,35 @@ app.controller('hammingController', ['$scope', function ($scope) {
       $scope.code_error = $scope.code_checked = $scope.sentNumber;
     }
 
-    function checkCode(code, verificators){
-        var errors = [];
-        for (var i = 0; i < verificators.length; i++) {
-          var temp = "0";
-          for (var j = 0; j < verificators[i].length; j++) {
-              temp = divideXOR(temp, code[verificators[i][j-1]]);
-          }
-          if(temp == "1")
-            errors.push(verificators[i][0])
+    function checkVerifiers(code){
+        var index = 1;
+        var verificatorValues = [];
+
+        for (var i = index; i-1 < code.length; i *=2 ) {
+            verificatorValues.push(i);
         }
 
-        console.log(errors);
+        var total_verificators = [];
+        for (var i = 0; i < verificatorValues.length; i++) {
+          var qtdOne = 0;
+          var k = cont = 0;
+          var lista_per_verificator = [];
+          var temp = code[verificatorValues[i]-1].toString();
+          for (k; k + verificatorValues[i] <= code.length;) {
+              temp = divideXOR(temp, code[k + verificatorValues[i] - 1]);
+              lista_per_verificator.push(k + verificatorValues[i]);
+              if(cont == verificatorValues[i] - 1){
+                k += verificatorValues[i] + 1;
+                cont = 0;
+              }else{
+                cont++;
+                k++;
+              }
+          }
+
+          total_verificators.push(lista_per_verificator);
+        }
+        return total_verificators;
     }
 
     function appendParity(valor, verificators, parity){
@@ -202,17 +252,12 @@ app.controller('hammingController', ['$scope', function ($scope) {
     function getFinalNumber(nextNumber, verificators, parity){
       var finalNumber = nextNumber;
       var total_verificators = [];
-      console.log(verificators);
       for (var i = 0; i < verificators.length; i++) {
-        //console.log("FOR: " + verificators[i]);
         var qtdOne = 0;
         var k = cont = 0;
         var lista_per_verificator = [];
-
-        //console.log("VERIFICADOR: " + verificators[i]);
         var temp = finalNumber[verificators[i]-1].toString(); // == "1" ? "0" : finalNumber[verificators[i]-1].toString();
         for (k; k + verificators[i] <= nextNumber.length;) {
-            //console.log("VERIFICADOR I: " + temp);
             temp = divideXOR(temp, finalNumber[k + verificators[i] - 1]);
             lista_per_verificator.push(k + verificators[i]);
             if(cont == verificators[i] - 1){
@@ -223,27 +268,19 @@ app.controller('hammingController', ['$scope', function ($scope) {
               k++;
             }
         }
-        console.log("PARIDADE: " + temp);
-        //
         var value = checkParityBit(temp, parity);
-        console.log(value);
-        //
         finalNumber = setCharAt(finalNumber.toString(), verificators[i]-1, value.toString());
         total_verificators.push(lista_per_verificator);
-      	//console.log("NUMERO BITS 1" + qtdOne);
       }
-
-      //console.log(finalNumber);
       return {"lista": total_verificators, "number": finalNumber};
     }
 
-    function generateBaseSequence(x){ //OK
-        //var even = [1,2,4,8,16,32,64,128,256,512,1024,2048];
+    function generateBaseSequence(x){
         var tempNumber = "";
         var lastPerfect = i = 1;
         var cont = x.toString().length;
         var verificators = [];
-        
+
         while(cont > 0){
           if(i % lastPerfect == 0){
             tempNumber += "0";
@@ -256,7 +293,6 @@ app.controller('hammingController', ['$scope', function ($scope) {
           }
           i++;
         }
-
         return {"lista": tempNumber, "verificators": verificators};
     }
 }]);
