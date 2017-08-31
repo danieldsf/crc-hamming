@@ -1,3 +1,5 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
 
 listOfPowerOfTwo = [1, 2, 4, 8, 16, 32, 64, 128, 256, 512, 1024]
 
@@ -7,23 +9,23 @@ listOfPowerOfTwo = [1, 2, 4, 8, 16, 32, 64, 128, 256, 512, 1024]
     testTransmit2 = "111001010101100"
     testVerify1 = "10101101010101011" - Sem erro
     testVerify2 = "10111101010101011" - Com erro na posição 4
-    
+
 '''
 
 def isPowerOfTwo(i):
-    #Simples função de verificação se o número é potência de dois ou não, retorna True ou False
+    #Simples funcao de verificação se o numero é potuncia de dois ou nuo, retorna True ou False
     return (i in listOfPowerOfTwo)
 
 #00000001
 # 1 << 2
 #00000100
 
-#Função que usa left shift para obter valor True ou False da posição bitPosition de qualquer número
+#Funcao que usa left shift para obter valor True ou False da posição bitPosition de qualquer número
 def getBitValue(number, bitPosition):
     position = (1 << bitPosition)
     return (number & position) == position;
 
-#Usando getBitValue, vejo até no máximo de 32 posições (o tamanho de um int) quais os bits True de um determinado numero, assim obtendo todos os necessários para formá-lo com uma soma
+#Usando getBitValue, vejo ate no maximo de 32 posicoes (o tamanho de um int) quais os bits True de um determinado numero, assim obtendo todos os necessarios para forma-lo com uma soma
 def getNumbersWithBinary(number):
     result = []
     for i in range(32):
@@ -33,7 +35,7 @@ def getNumbersWithBinary(number):
     return result
 
 def getQuantityToIncrement(string):
-    #Função para contar a quantidade de potências de dois na palavra a ser usada para adicionar os slots
+    #Funcao para contar a quantidade de potencias de dois na palavra a ser usada para adicionar os slots
     quantity = 0
     for i in range(len(string)):
         if(isPowerOfTwo(i+1)):
@@ -43,9 +45,9 @@ def getQuantityToIncrement(string):
 def getParity(powerOfTwo, binaries, usingEven):
 
     #Aqui verifico a paridade, pegando o conjunto de soma via subset_sum de cada posição e verificando se a potência de dois dada está na lista retornada
-    #Se estiver na lista e se o valor da posição for 1, o contador é incrementado para verificação de paridade posterior
+    #Se estiver na lista e se o valor da posicao for 1, o contador é incrementado para verificação de paridade posterior
     #usingEven é um boolean que determina se está usando paridade par ou não, binaries é a palavra e powerOfTwo a potência de dois a verificar a paridade
-    
+
     count = 0
     usedPositions = []
     for i in range(len(binaries)):
@@ -80,13 +82,13 @@ def receiveAndVerify(binary, parityUsed):
     #Aplicação do algoritmo de verificação de Hamming em si
     #Para cada posição onde o índice for potência de dois, será obtida a paridade e uma nova palavra será formada com tais bits
     #Se os bits da verificação não condizerem com os bits retirados da palavra original, há algum erro e tal será obtido pela soma das potências de dois onde houve erro
-    
+
     slotsToVerify = getSlotsFromBinary(binary)
     parityBits = []
     result = []
     wrongBits = []
     for i in range(len(binary)):
-        valueToAdd = binary[i] 
+        valueToAdd = binary[i]
         if(isPowerOfTwo(i+1)):
             valueToAdd = getParity(i+1, binary, parityUsed)
             parityBits.append(str(valueToAdd))
@@ -123,7 +125,7 @@ def transmit(binary, usingEven):
     result = []
     parityBits = []
     for i in range(len(binaryWithSlots)):
-        valueToAdd = binaryWithSlots[i] 
+        valueToAdd = binaryWithSlots[i]
         if(valueToAdd == 'X'):
             valueToAdd = getParity(i+1, binaryWithSlots, usingEven)
             parityBits.append(str(valueToAdd))
@@ -139,18 +141,18 @@ def makeAnError(binary, position):
             toAdd = "0" if (toAdd == "1") else "1"
         array.append(toAdd)
     return "".join(array)
-            
+
 
 def main():
     while(True):
-        
+
         binary = input("Digite a palavra (em binário) a ser usada no programa\nou apenas 0 para encerrar: ")
-        
+
         if(binary == "0"):
             break
-        
+
         isEven = input("Usando paridade par ou ímpar? P/I = ")
-        
+
         while(True):
             if(isEven == "P" or isEven == "p"):
                 isEven = True
@@ -162,7 +164,7 @@ def main():
                 isEven = input("Digite uma paridade válida! P/I = ")
 
         operationToDo = input("Deseja transmitir ou receber a palavra? T/R = ")
-        
+
         while(True):
             if(operationToDo == "T" or operationToDo == "t"):
                 print(transmit(binary, isEven))
@@ -176,5 +178,5 @@ def main():
                 break
             else:
                 operationToDo = input("Digite uma operação válida! T/R = ")
-      
+
 main()
