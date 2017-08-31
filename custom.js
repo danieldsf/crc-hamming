@@ -152,8 +152,8 @@ app.controller('hammingController', ['$scope', function ($scope) {
           console.log("TEMP = "   + temp);
 
           if(divideXOR(toCheck[master - 1], value) == "1"){
-              soma = soma + i + 1;
-              indexes.push(i + 1)
+              soma = soma + master;
+              indexes.push(master)
           }
           //
           if(soma == 0){
@@ -171,6 +171,7 @@ app.controller('hammingController', ['$scope', function ($scope) {
     }
 
     $scope.createHamming = function(){
+      $scope.notice = false;
       $scope.valid = false;
       $scope.pressed = true;
       var currentNumber = $scope.ham.code.$viewValue;
